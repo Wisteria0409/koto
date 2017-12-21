@@ -451,11 +451,18 @@ void ThreadShowMetricsScreen()
 
         // Get current window size
         if (isTTY) {
+        #ifdef WIN32
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        cols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        #else
+	  cols = 80;
             struct winsize w;
             w.ws_col = 0;
             if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) != -1 && w.ws_col != 0) {
                 cols = w.ws_col;
             }
+        #endif
         }
 
         if (isScreen) {
